@@ -5,6 +5,8 @@ import "./index.css";
 import { download, saveAs } from "./download";
 import { uploadFile } from "./upload";
 import Progress from "./Progress";
+import FileList from "./FileList";
+
 function App() {
   let inputRef;
   const [loading, setLoading] = useState(false);
@@ -48,6 +50,7 @@ function App() {
         }}
       />
       <Progress />
+      <FileList />
     </div>
   );
 }
