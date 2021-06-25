@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import "antd/dist/antd.css";
 import "./index.css";
-import { download, saveAs } from "./download";
 import { uploadFile } from "./upload";
 import Progress from "./Progress";
 import FileList from "./FileList";
@@ -15,17 +14,12 @@ function App() {
     inputRef.click();
   };
   const upload = e => {
-    uploadFile(e.target.files[0]);
-  };
-  const handleDownLoad = () => {
-    console.log("多线程下载开始: " + +new Date());
-    download({
-      url: "",
-      chunkSize: 0.1 * 1024 * 1024,
-      poolLimit: 6,
-    }).then(buffers => {
-      console.log("多线程下载结束: " + +new Date());
-      saveAs({ buffers, name: "我的压缩包", mime: "application/zip" });
+    uploadFile(e.target.files[0], {
+      onSuccess: () => message.success("上传成功"),
+      onError: () => {
+        message.error("上传失败");
+        setLoading(false);
+      },
     });
   };
   return (
@@ -35,9 +29,7 @@ function App() {
         size="large"
         block
         loading={loading}
-        onClick={() => {
-          handleClick();
-        }}
+        onClick={handleClick}
       >
         上传文件
       </Button>
@@ -45,9 +37,7 @@ function App() {
         ref={el => (inputRef = el)}
         style={{ display: "none" }}
         type="file"
-        onChange={e => {
-          upload(e);
-        }}
+        onChange={upload}
       />
       <Progress />
       <FileList />

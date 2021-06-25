@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { List, message, Button } from "antd";
+import { download, saveAs } from "../download";
 import InfiniteScroll from "react-infinite-scroller";
+import CONFIG from "../config";
 
-const baseUrl = "http://127.0.0.1:1235";
+const baseUrl = CONFIG.baseUrl;
 
 export default function FileList() {
   const [loading, setLoading] = useState(false);
@@ -28,15 +30,20 @@ export default function FileList() {
     fetchData();
   }, []);
   const handleInfiniteOnLoad = () => {};
-  const handleClick = async fileName => {
+
+  const handleDownLoad = async fileName => {
     try {
       setDownLoading(true);
-      const res = await fetch(
-        `${baseUrl}/file/download.do?fileName=${fileName}`
-      ).then(res => res.json());
-      setDownLoading(false);
-      const { code, data, msg } = res || {};
-      debugger;
+      console.log("多线程下载开始: " + +new Date());
+      download({
+        url: `${baseUrl}/file/download.do?fileName=${fileName}`,
+        chunkSize: 1 * 1024 * 1024,
+        poolLimit: 2,
+      }).then(buffers => {
+        setDownLoading(false);
+        console.log("多线程下载结束: " + +new Date());
+        saveAs({ buffers, name: fileName, mime: "video/mp4" });
+      });
     } catch (error) {
       setDownLoading(false);
     }
@@ -59,7 +66,7 @@ export default function FileList() {
               type="primary"
               loading={downLoading}
               onClick={() => {
-                handleClick(item.file);
+                handleDownLoad(item.file);
               }}
             >
               下载文件

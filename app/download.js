@@ -124,4 +124,4 @@ const saveAs = ({ name, buffers, mime = "application/octet-stream" }) => {
   URL.revokeObjectURL(blob);
 };
 
-export { saveAs, download };
+export { saveAs, download, asyncPool };

@@ -1,5 +1,7 @@
 import { asyncPool } from "./download";
 import SparkMD5 from "spark-md5";
+import CONFIG from "./config";
+const baseUrl = CONFIG.baseUrl;
 
 const calcFileMD5 = file => {
   return new Promise((resolve, reject) => {
@@ -38,7 +40,7 @@ const checkFileExist = (url, name, md5) => {
     const xhr = new XMLHttpRequest();
     xhr.open("GET", `${url}?name=${name}&md5=${md5}`);
     xhr.onload = () => {
-      resolve(xhr.responseText); // data.isExists = true 代表已经上传过
+      resolve(JSON.parse(xhr.responseText)); // data.isExists = true 代表已经上传过
     };
     xhr.onerror = reject;
     xhr.send();
@@ -104,29 +106,35 @@ const concatFiles = (url, name, md5) => {
   });
 };
 
-const uploadFile = async file => {
-  const fileMd5 = await calcFileMD5(file); // 计算文件的MD5
-  const fileStatus = await checkFileExist(
-    // 判断文件是否已存在
-    "/exists",
-    file.name,
-    fileMd5
-  );
-  if (fileStatus.data && fileStatus.data.isExists) {
-    alert("文件已上传[秒传]");
-    return;
-  } else {
-    await upload({
-      url: "/single",
-      file, // 文件对象
-      fileMd5, // 文件MD5值
-      fileSize: file.size, // 文件大小
-      chunkSize: 1 * 1024 * 1024, // 分块大小
-      chunkIds: fileStatus.data.chunkIds, // 已上传的分块列表
-      poolLimit: 3, // 限制的并发数
-    });
+const uploadFile = async (file, { onSuccess, onError }) => {
+  try {
+    const fileMd5 = await calcFileMD5(file); // 计算文件的MD5
+    const fileStatus = await checkFileExist(
+      // 判断文件是否已存在
+      baseUrl + "/upload/exists.do",
+      file.name,
+      fileMd5
+    );
+    if (fileStatus.data && fileStatus.data.isExists) {
+      onSuccess();
+      return;
+    } else {
+      await upload({
+        url: baseUrl + "/upload/single_upload.do",
+        file, // 文件对象
+        fileMd5, // 文件MD5值
+        fileSize: file.size, // 文件大小
+        chunkSize: 1 * 1024 * 1024, // 分块大小
+        chunkIds: fileStatus.data.chunkIds, // 已上传的分块列表
+        poolLimit: 3, // 限制的并发数
+      });
+    }
+    // 文件已全部上传完成,可以进行合并文件
+    await concatFiles("/concatFiles", file.name, fileMd5);
+  } catch (error) {
+    console.log("errorerror ", error);
+    onError();
   }
-  await concatFiles("/concatFiles", file.name, fileMd5);
 };
 
 export { uploadFile };

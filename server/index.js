@@ -1,5 +1,6 @@
 const http = require("http");
 const { fileList, download } = require("./file/download");
+const { exists, singleUpload } = require("./file/upload");
 
 const server = http.createServer(serverCallback);
 
@@ -13,20 +14,30 @@ function serverCallback(req, res) {
   const path = url[0],
     params = url[1];
   if (path === "/file.do") {
-    fileList(res);
+    return fileList(res);
   }
   if (path === "/file/download.do") {
-    download(res, params);
+    return download(res, req.method, params);
+  }
+  if (path === "/upload/exists.do") {
+    return exists(res, req.method, params);
+  }
+  if (path === "/upload/single_upload.do") {
+    let data = "";
+    req.on("data", chunk => {
+      data += chunk;
+    });
+    req.on("end", () => {
+      console.log("datadatadatadatadata", data);
+    });
+    return singleUpload(res, req.method, params);
   }
 }
 
 function setHeader(res) {
   //设置允许跨域的域名，*代表允许任意域名跨域
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-type,Content-Length,Authorization,Accept,X-Requested-Width"
-  );
-  res.setHeader("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "*");
+  res.setHeader("Access-Control-Allow-Methods", "*");
   res.setHeader("Content-Type", "text/json");
 }
