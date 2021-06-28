@@ -1,6 +1,6 @@
 import { asyncPool } from "./download";
 import SparkMD5 from "spark-md5";
-import CONFIG from "./config";
+import CONFIG from "../config";
 const baseUrl = CONFIG.baseUrl;
 
 const calcFileMD5 = file => {
@@ -115,11 +115,12 @@ const uploadFile = async (file, { onSuccess, onError }) => {
       file.name,
       fileMd5
     );
+    let uploadResult;
     if (fileStatus.data && fileStatus.data.isExists) {
       onSuccess();
       return;
     } else {
-      await upload({
+      uploadResult = await upload({
         url: baseUrl + "/upload/single_upload.do",
         file, // 文件对象
         fileMd5, // 文件MD5值
@@ -129,11 +130,26 @@ const uploadFile = async (file, { onSuccess, onError }) => {
         poolLimit: 3, // 限制的并发数
       });
     }
+    // 判断是否都上传成功
+    let flag = true;
+    for (let i = 0; i < uploadResult.length; i++) {
+      const item = JSON.parse(uploadResult[i]);
+      if (item.code == 200) continue;
+      flag = false;
+    }
+
     // 文件已全部上传完成,可以进行合并文件
-    await concatFiles("/concatFiles", file.name, fileMd5);
+    if (flag) {
+      return await concatFiles(
+        baseUrl + "/upload/concat_files.do",
+        file.name,
+        fileMd5
+      );
+    }
+    // 部分未上传成功
+    onError("部分未上传成功");
   } catch (error) {
-    console.log("errorerror ", error);
-    onError();
+    onError(error);
   }
 };
 

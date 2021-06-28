@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { List, message, Button } from "antd";
-import { download, saveAs } from "../download";
+import { download, saveAs } from "../utils/download";
 import InfiniteScroll from "react-infinite-scroller";
 import CONFIG from "../config";
 

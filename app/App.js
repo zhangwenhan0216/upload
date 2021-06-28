@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, message } from "antd";
 import "antd/dist/antd.css";
 import "./index.css";
-import { uploadFile } from "./upload";
+import { uploadFile } from "./utils/upload";
 import Progress from "./Progress";
 import FileList from "./FileList";
 
@@ -16,8 +16,8 @@ function App() {
   const upload = e => {
     uploadFile(e.target.files[0], {
       onSuccess: () => message.success("上传成功"),
-      onError: () => {
-        message.error("上传失败");
+      onError: (err = "上传失败") => {
+        message.error(err);
         setLoading(false);
       },
     });

@@ -1,11 +1,15 @@
 const http = require("http");
 const { fileList, download } = require("./file/download");
-const { exists, singleUpload } = require("./file/upload");
-
+const { exists, singleUpload, concatFiles } = require("./file/upload");
+const { errorLog } = require("./utils");
 const server = http.createServer(serverCallback);
 
 server.listen("1235", "127.0.0.1", () => {
   console.log("服务启动成功, 监听1235端口成功");
+});
+
+server.on("close", err => {
+  errorLog(err);
 });
 
 function serverCallback(req, res) {
@@ -23,14 +27,10 @@ function serverCallback(req, res) {
     return exists(res, req.method, params);
   }
   if (path === "/upload/single_upload.do") {
-    let data = "";
-    req.on("data", chunk => {
-      data += chunk;
-    });
-    req.on("end", () => {
-      console.log("datadatadatadatadata", data);
-    });
-    return singleUpload(res, req.method, params);
+    return singleUpload(req, res);
+  }
+  if (path === "/upload/concat_files.do") {
+    return concatFiles(res, params);
   }
 }
 
