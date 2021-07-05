@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-// const Promise = require("bluebird");
-// const stream = require("readable-stream");
+
 const errorLog = err => {
   if (fsExistsSync("log")) {
     fs.appendFile(
@@ -29,9 +28,9 @@ function date() {
   return `${myYear}-${myMonth}-${myToday} ${myHour}:${myMinute}:${mySecond}`;
 }
 
-function fsExistsSync(path) {
+function fsExistsSync(url) {
   try {
-    fs.accessSync(path, fs.F_OK);
+    fs.accessSync(url, fs.F_OK);
   } catch (e) {
     return false;
   }
@@ -51,58 +50,29 @@ function bufferSplit(buffer, separator) {
   return result;
 }
 
-/**
- * Merge all input files by pipeline stream
- * @access private
- * @param {array} inputPathList
- * @param {string} outputPath
- * @param {int} chunkSize[optional]
- *
- * @returns {Promise}
- */
-const streamMerge = (
-  inputPathList,
-  outputPath,
-  chunkSize = 2 * 1024 * 1024
-) => {
-  // Validate inputPathList.
-  if (inputPathList.length <= 0) {
-    return Promise.reject(new Error("Please input an array with files path!"));
+function removeDir(url) {
+  if (fs.existsSync(url)) {
+    let files = fs.readdirSync(url);
+    if (files.length > 0) {
+      files.forEach((file, index) => {
+        const curPath = path.join(url, file);
+        if (fs.statSync(curPath).isDirectory()) {
+          removeDir(curPath);
+        } else {
+          fs.unlinkSync(curPath);
+        }
+      });
+    }
+    fs.rmdirSync(url);
+  } else {
+    errorLog("路径不存在");
+    console.log("路径不存在");
   }
-
-  // create writable stream for output
-  const output = fs.createWriteStream(outputPath, {
-    encoding: null,
-  });
-
-  return Promise.mapSeries(inputPathList, function (item) {
-    return new Promise(function (resolve, reject) {
-      const input = fs.createReadStream(item, {
-        encoding: null,
-      });
-
-      const inputStream = new stream.Readable({
-        // equivalent to controlling the size of a bucket
-        highWaterMark: chunkSize, // the size of each on data of the control flow, the default is 16kb
-      }).wrap(input);
-
-      // pipeline data flow
-      inputStream.pipe(output, {
-        end: false,
-      });
-      inputStream.on("error", reject);
-      inputStream.on("end", resolve);
-    });
-  }).then(function () {
-    // close the stream to prevent memory leaks
-    output.close();
-    return Promise.resolve(outputPath);
-  });
-};
+}
 
 module.exports = {
-  // streamMerge,
   bufferSplit,
   errorLog,
   fsExistsSync,
+  removeDir,
 };

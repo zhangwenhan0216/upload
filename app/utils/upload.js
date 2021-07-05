@@ -140,11 +140,13 @@ const uploadFile = async (file, { onSuccess, onError }) => {
 
     // 文件已全部上传完成,可以进行合并文件
     if (flag) {
-      return await concatFiles(
+      await concatFiles(
         baseUrl + "/upload/concat_files.do",
         file.name,
         fileMd5
       );
+      onSuccess();
+      return;
     }
     // 部分未上传成功
     onError("部分未上传成功");

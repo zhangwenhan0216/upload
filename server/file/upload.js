@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const querystring = require("querystring");
-const { errorLog, fsExistsSync, bufferSplit } = require("../utils");
+const { errorLog, fsExistsSync, bufferSplit, removeDir } = require("../utils");
 
 const filePath = path.join(__dirname, "../../file");
 const outPutDir = path.join(__dirname, "../../out-files");
@@ -21,6 +21,7 @@ const concatFiles = (res, params) => {
     const streamMergeRecursive = (files, outPutReadable) => {
       // 递归到尾部情况判断
       if (!files.length) {
+        removeDir(temporaryDir);
         return outPutReadable.end(() => {
           return res.end(
             JSON.stringify({

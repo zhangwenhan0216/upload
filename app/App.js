@@ -10,12 +10,16 @@ function App() {
   let inputRef;
   const [loading, setLoading] = useState(false);
   const handleClick = () => {
-    setLoading(true);
     inputRef.click();
   };
   const upload = e => {
-    uploadFile(e.target.files[0], {
-      onSuccess: () => message.success("上传成功"),
+    const file = e.target.files[0];
+    setLoading(true);
+    uploadFile(file, {
+      onSuccess: () => {
+        setLoading(false);
+        message.success("上传成功");
+      },
       onError: (err = "上传失败") => {
         message.error(err);
         setLoading(false);
