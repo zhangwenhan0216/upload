@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const querystring = require("querystring");
 const { errorLog, fsExistsSync } = require("../utils");
+const { pipeline } = require("stream");
 
 const filePath = path.resolve(__dirname, "../../", "file");
 const fileList = async res => {
@@ -30,7 +31,7 @@ const fileList = async res => {
   }
 };
 
-const download = (res, method, params) => {
+const download = (res, req, params) => {
   try {
     const fileName = querystring.parse(params)?.fileName;
     if (!fileName) {
@@ -43,14 +44,55 @@ const download = (res, method, params) => {
     }
     const curfilePath = path.join(filePath, fileName);
     if (fsExistsSync(curfilePath)) {
-      if (method === "HEAD") {
+      if (req.method === "HEAD") {
         const file = fs.statSync(curfilePath);
         res.setHeader("Content-Length", file.size);
         return res.end();
       }
-      res.setHeader("Connection", "Keep-Alive");
-      res.setHeader("Content-Type", "application/octet-stream");
-      fs.createReadStream(curfilePath).pipe(res);
+      let range = req.headers?.range;
+      if (range) {
+        let [, start, end] = range.match(/(\d*)-(\d*)/);
+        let statObj = null;
+        try {
+          statObj = fs.statSync(curfilePath);
+        } catch (error) {
+          return res.end(
+            JSON.stringify({
+              code: 502,
+              msg: "文件找不到",
+            })
+          );
+        }
+        let total = statObj.size;
+        //处理请求头中不传范围问题
+        start = start ? parseInt(start) : 0;
+        end = end ? parseInt(end) : total - 1;
+        res.statusCode = 206;
+        res.setHeader("Accept-Ranges", "bytes");
+        res.setHeader("Connection", "Keep-Alive");
+        res.setHeader("Content-Type", "application/octet-stream");
+        pipeline(
+          fs.createReadStream(curfilePath, {
+            start,
+            end,
+          }),
+          res,
+          err => {
+            if (err) {
+              errorLog(err);
+              return res.end(
+                JSON.stringify({
+                  code: 502,
+                  msg: "文件传输失败",
+                })
+              );
+            }
+          }
+        );
+      } else {
+        // 没有 range 请求头时将整个文件内容返回给客户端
+        fs.createReadStream(curfilePath).pipe(res);
+      }
     } else {
       return res.end(
         JSON.stringify({

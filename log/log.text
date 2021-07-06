@@ -13,3 +13,39 @@
 
 时间：2021-6-28 18:50:31
 错误：ReferenceError: streamMerge is not defined
+
+时间：2021-7-6 16:50:1
+错误：Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+
+时间：2021-7-6 16:50:1
+错误：Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+
+时间：2021-7-6 16:53:5
+错误：Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+
+时间：2021-7-6 16:53:5
+错误：Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+
+时间：2021-7-6 16:55:53
+错误：Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+
+时间：2021-7-6 16:55:53
+错误：Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+
+时间：2021-7-6 17:4:2
+错误：Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+
+时间：2021-7-6 17:4:2
+错误：Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+
+时间：2021-7-6 17:8:30
+错误：Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+
+时间：2021-7-6 17:8:30
+错误：Error [ERR_STREAM_PREMATURE_CLOSE]: Premature close
+
+时间：2021-7-6 17:31:41
+错误：ReferenceError: response is not defined
+
+时间：2021-7-6 17:31:41
+错误：ReferenceError: response is not defined

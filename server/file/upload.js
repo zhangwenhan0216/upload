@@ -100,8 +100,6 @@ const singleUpload = (req, res) => {
           // 获取文件名
           let filename = infoResult[2].split("=")[1];
           filename = filename.substring(1, filename.length - 1);
-          console.log(name);
-          console.log(filename);
 
           // 将文件存储到服务器
           fs.writeFile(path.join(temporaryDir, filename), data, err => {

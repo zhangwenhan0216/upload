@@ -42,6 +42,7 @@ const asyncPool = async (poolLimit, array, iteratorFn) => {
   }
   return Promise.all(ret);
 };
+
 /**
  * @description  函数用于根据传入的参数发起范围请求，从而下载指定范围内的文件数据块：
  * @param {URL} url 请求地址

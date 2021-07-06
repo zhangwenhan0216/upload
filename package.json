@@ -15,6 +15,7 @@
   },
   "scripts": {
     "server": "supervisor server/index.js",
+    "stream": "supervisor server/stream.js",
     "start": "parcel app/index.html"
   },
   "keywords": [],

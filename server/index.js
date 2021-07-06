@@ -14,6 +14,10 @@ server.on("close", err => {
 
 function serverCallback(req, res) {
   setHeader(res);
+  // 处理预请求
+  if (req.method === "OPTIONS") {
+    return res.end();
+  }
   const url = req.url.split("?");
   const path = url[0],
     params = url[1];
@@ -21,7 +25,7 @@ function serverCallback(req, res) {
     return fileList(res);
   }
   if (path === "/file/download.do") {
-    return download(res, req.method, params);
+    return download(res, req, params);
   }
   if (path === "/upload/exists.do") {
     return exists(res, req.method, params);
