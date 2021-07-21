@@ -12,12 +12,15 @@
     "react-infinite-scroller": "^1.2.4"
   },
   "devDependencies": {
+    "@types/node": "^16.4.0",
     "spark-md5": "^3.0.1"
   },
   "scripts": {
     "server": "supervisor server/index.js",
     "stream": "supervisor server/stream.js",
-    "start": "parcel app/index.html"
+    "start": "parcel app/index.html",
+    "pro": "tsc --watch",
+    "dev": "node ./ts/main-process.js"
   },
   "keywords": [],
   "author": "",
