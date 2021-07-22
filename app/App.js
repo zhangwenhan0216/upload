@@ -5,6 +5,7 @@ import "./index.css";
 import { uploadFile } from "./utils/upload";
 import Progress from "./Progress";
 import FileList from "./FileList";
+import CanvasClock from "./canvas/time";
 
 function App() {
   let inputRef;
@@ -45,6 +46,7 @@ function App() {
       />
       <Progress />
       <FileList />
+      <CanvasClock />
     </div>
   );
 }
