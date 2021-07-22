@@ -27,16 +27,18 @@ var __read = (this && this.__read) || function (o, n) {
     return ar;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var path_1 = require("path");
 var fork = require("child_process").fork;
-var cpus = require("os").cpus;
+var cpus = require("os").cpus();
 var serve = require("net").createServer();
 serve.listen(3000);
 process.title = "node-master";
 var workers = new Map();
 function createWorker() {
-    var worker = fork("./child-process.ts");
+    var worker = fork(path_1.resolve(process.cwd(), "./ts/child-process.js"));
     worker.on("message", function (message) {
         if (message.act) {
+            console.log("emit");
             createWorker();
         }
     });
@@ -49,10 +51,12 @@ function createWorker() {
 for (var i = 0, len = cpus.length; i < len; i++) {
     createWorker();
 }
-// process.once("SIGINT", close.bind(this, "SIGINT"));
-// process.once("SIGQUIT", close.bind(this, "SIGQUIT"));
-// process.once("SIGTERM", close.bind(this, "SIGTERM"));
-// process.once("exit", close.bind(this));
+// process是EventEmitter的实例，
+// 给SIGINT SIGOUIT SIGTERM exit事件注册监听，下次触发事件时移除监听触发函数
+process.once("SIGINT", close.bind(this, "SIGINT"));
+process.once("SIGQUIT", close.bind(this, "SIGQUIT"));
+process.once("SIGTERM", close.bind(this, "SIGTERM"));
+process.once("exit", close.bind(this));
 function close(code) {
     var e_1, _a;
     console.log("close-code", code);
