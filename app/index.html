@@ -1,13 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>upload</title>
-</head>
-<body>
-  <div id="app"></div>
-  <script src="./index.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>upload</title>
+    <style>
+      svg {
+        stroke: #000;
+        stroke-width: 5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="100%" height="300">
+      <!-- 线段 -->
+      <defs>
+        <filter id="blue">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="5" />
+        </filter>
+        <g id="leftalign">
+          <line x1="3" y1="3" x2="48" y2="3"></line>
+          <line x1="3" y1="19" x2="62" y2="19"></line>
+          <line x1="3" y1="35" x2="48" y2="35"></line>
+          <line x1="3" y1="51" x2="62" y2="51"></line>
+        </g>
+        <!-- 折线 -->
+        <g id="rightcaret">
+          <polyline points="3 3 30 28 3 53"></polyline>
+        </g>
+        <!-- 矩形 -->
+        <g id="browser">
+          <rect x="3" y="3" width="80" height="60" rx="5"></rect>
+          <line x1="3" y1="19" x2="80" y2="19"></line>
+          <line x1="20" y1="3" x2="20" y2="17"></line>
+        </g>
+        <!-- 圆 -->
+        <!-- 我们需要给 viewBox 属性4个值。前两个定义图标的左上角，第三和第四分别定义它的宽度和高度。 -->
+        <symbol id="alert" viewBox="0 0 86 86" style="filter: url(#blue)">
+          <ellipse cx="43" cy="43" rx="40" ry="40"></ellipse>
+          <line style="stroke-width: 8" x1="43" y1="19" x2="43" y2="48"></line>
+          <ellipse style="fill: #000" cx="43" cy="65" rx="5" ry="5"></ellipse>
+        </symbol>
+        <!-- 播放图标 -->
+        <symbol id="play" viewBox="0 0 86 86">
+          <ellipse cx="43" cy="43" rx="40" ry="40"></ellipse>
+          <polygon points="35 23, 60 43, 35 63"></polygon>
+        </symbol>
+        <!-- 路径 下载图标-->
+        <!-- d data数据 M 移动 L 画线 Z 闭合 -->
+        <symbol id="download" viewBox="0 0 64 71">
+          <path
+            d="M 18 3, L 46 3, L 46 40, L 61 40, L 32 68, L 3 40, L 18 40, Z"
+          ></path>
+        </symbol>
+      </defs>
+      <!-- 使用组合 -->
+      <use href="#leftalign" x="100" y="100"></use>
+      <use href="#rightcaret" x="300" y="100"></use>
+      <use href="#browser" x="500" y="100"></use>
+      <use href="#alert" x="100" y="200" width="100" height="100"></use>
+      <use href="#play" x="300" y="200" width="100" height="100"></use>
+      <use href="#download" x="500" y="200" width="100" height="100"></use>
+    </svg>
+    <div id="app"></div>
+    <script src="./index.js"></script>
+  </body>
 </html>

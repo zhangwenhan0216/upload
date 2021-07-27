@@ -11,6 +11,7 @@ export default function CanvasClock() {
       ctx.save();
       ctx.clearRect(0, 0, 600, 600);
       ctx.translate(300, 300); // 设置中心点，此时300，300变成了坐标的0，0
+
       ctx.save();
       // 画外成圆
       ctx.beginPath();
@@ -32,7 +33,6 @@ export default function CanvasClock() {
       const min = time.getMinutes();
       const sen = time.getSeconds();
 
-      //
       ctx.rotate(
         ((2 * Math.PI) / 12) * hour +
           ((2 * Math.PI) / 12) * (min / 60) -
@@ -44,11 +44,10 @@ export default function CanvasClock() {
       ctx.lineWidth = 10;
       ctx.stroke();
       ctx.closePath();
-      // 恢复成上一次save的状态
       ctx.restore();
+
       // 恢复完再保存一次
       ctx.save();
-
       ctx.rotate(
         ((2 * Math.PI) / 60) * min +
           ((2 * Math.PI) / 60) * (sen / 60) -
@@ -62,8 +61,8 @@ export default function CanvasClock() {
       ctx.stroke();
       ctx.closePath();
       ctx.restore();
-      ctx.save();
 
+      ctx.save();
       ctx.rotate(((2 * Math.PI) / 60) * sen - Math.PI / 2);
       ctx.beginPath();
       ctx.moveTo(-10, 0);
@@ -72,25 +71,43 @@ export default function CanvasClock() {
       ctx.stroke();
       ctx.closePath();
       ctx.restore();
-      ctx.save();
 
+      ctx.save();
       for (let i = 1; i <= 60; i++) {
-        if (i % 5 == 0) {
-          ctx.lineWidth = 5;
-        } else {
-          ctx.lineWidth = 1;
-        }
-        console.log("ctx.lineWidth", ctx.lineWidth);
         ctx.rotate((2 * Math.PI) / 60);
         ctx.beginPath();
-        ctx.moveTo(90, 0);
+        let w, x;
+        if (i % 5 === 0) {
+          w = 5;
+          x = 90;
+        } else {
+          w = 1;
+          x = 94;
+        }
+        ctx.lineWidth = w;
+        ctx.moveTo(x, 0);
         ctx.lineTo(100, 0);
         ctx.stroke();
         ctx.closePath();
       }
       ctx.restore();
+
       ctx.save();
+      const hourText = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2];
+      for (let i = 0; i < hourText.length; i++) {
+        const num = hourText[i];
+        ctx.beginPath();
+        const angle = ((2 * Math.PI) / 12) * i;
+        const x = Math.cos(angle) * 80;
+        const y = Math.sin(angle) * 80;
+        ctx.font = "12px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(num, x, y);
+        ctx.closePath();
+      }
       ctx.restore();
+
       ctx.restore();
     }, 1000);
   };
@@ -99,7 +116,6 @@ export default function CanvasClock() {
       width="600px"
       height="600px"
       ref={ref => {
-        console.log("ref", ref);
         canvasRef = ref;
       }}
     ></canvas>

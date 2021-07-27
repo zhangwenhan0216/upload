@@ -22,7 +22,7 @@ function serverCallback(req, res) {
   const path = url[0],
     params = url[1];
   if (path === "/file.do") {
-    return fileList(res);
+    return fileList(res, req);
   }
   if (path === "/file/download.do") {
     return download(res, req, params);

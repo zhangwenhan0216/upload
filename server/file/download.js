@@ -3,10 +3,20 @@ const path = require("path");
 const querystring = require("querystring");
 const { errorLog, fsExistsSync } = require("../utils");
 const { pipeline } = require("stream");
-
 const filePath = path.resolve(__dirname, "../../", "file");
-const fileList = async res => {
+
+const eTag = "bfc13a64729c4290ef5b2c2730249c88ca92d82d";
+
+const fileList = async (res, req) => {
   try {
+    const getETag = req.headers["If-None-Match".toLocaleLowerCase()]; // 客户端将设置的ETag转化为if-none-match的值
+    if (getETag == eTag) {
+      res.statusCode = 304;
+      res.end();
+      return;
+    }
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("ETag", eTag); // 服务端生成 ETag token值
     const fileDir = await fs
       .readdirSync(filePath)
       .filter(_ => _.match(/.mp4$/i))

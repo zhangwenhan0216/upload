@@ -6,6 +6,8 @@ import { uploadFile } from "./utils/upload";
 import Progress from "./Progress";
 import FileList from "./FileList";
 import CanvasClock from "./canvas/time";
+import ScratchCard from "./canvas/scratchCard";
+// import "./utils/compose";
 
 function App() {
   let inputRef;
@@ -47,6 +49,7 @@ function App() {
       <Progress />
       <FileList />
       <CanvasClock />
+      <ScratchCard />
     </div>
   );
 }

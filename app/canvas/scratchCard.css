@@ -1,0 +1,13 @@
+.scratch-card {
+  padding-bottom: 50px;
+}
+.scratch-text {
+  position: relative;
+  width: 200px;
+  text-align: center;
+  line-height: 20px;
+  left: 100px;
+  top: -60px;
+  font-size: 20px;
+  z-index: -1;
+}
