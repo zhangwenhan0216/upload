@@ -1,18 +1,7 @@
-const http = require("http");
 const { fileList, download } = require("./file/download");
 const { exists, singleUpload, concatFiles } = require("./file/upload");
-const { errorLog } = require("./utils");
-const server = http.createServer(serverCallback);
 
-server.listen("1235", "127.0.0.1", () => {
-  console.log("服务启动成功, 监听1235端口成功");
-});
-
-server.on("close", err => {
-  errorLog(err);
-});
-
-function serverCallback(req, res) {
+function serverCallback(req: any, res: any) {
   setHeader(res);
   // 处理预请求
   if (req.method === "OPTIONS") {
@@ -38,10 +27,12 @@ function serverCallback(req, res) {
   }
 }
 
-function setHeader(res) {
+function setHeader(res: any) {
   //设置允许跨域的域名，*代表允许任意域名跨域
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "*");
   res.setHeader("Access-Control-Allow-Methods", "*");
   res.setHeader("Content-Type", "text/json");
 }
+
+export default serverCallback;

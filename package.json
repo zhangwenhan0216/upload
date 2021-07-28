@@ -16,11 +16,10 @@
     "spark-md5": "^3.0.1"
   },
   "scripts": {
-    "server": "supervisor server/index.js",
     "stream": "supervisor server/stream.js",
     "start": "parcel app/index.html",
     "pro": "tsc --watch",
-    "dev": "node ./ts/main-process.js"
+    "server": "node ./ts/process/main-process.js"
   },
   "keywords": [],
   "author": "",

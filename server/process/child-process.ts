@@ -1,27 +1,19 @@
 import { SendHandle } from "node:child_process";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Socket } from "node:net";
+import serverCallback from "../index.js";
 
 const http = require("http");
-
 // http.createServer返回一个http.Server的新实例，
 // http.Server继承于net.Server(TCP和IPC服务器)
 // TCP服务器继承于EventEmitter
-const server = http.createServer(
-  (req: IncomingMessage, res: ServerResponse) => {
-    res.writeHead(200, {
-      "Content-Type": "text/plan",
-    });
-    res.end("I am worker, pid: " + process.pid + ", ppid: " + process.ppid);
-    throw new Error("worker process exception!"); // 测试异常进程退出、重启
-  }
-);
+const server = http.createServer(serverCallback);
+
 let worker: any;
 process.title = "node-worker";
 
 process.on("message", (message: string, sendHandle: any) => {
   if (message === "server") {
-    console.log("connection");
     worker = sendHandle;
     // TCP服务器监听的3000端口，客户端通过3000端口访问时触发，socket 是 net.Socket 的实例。
     worker.on("connection", (socket: Socket) => {

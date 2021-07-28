@@ -11,7 +11,7 @@ process.title = "node-master";
 const workers = new Map();
 
 function createWorker(): void {
-  const worker = fork(resolve(process.cwd(), "./ts/child-process.js"));
+  const worker = fork(resolve(process.cwd(), "./ts/process/child-process.js"));
 
   worker.on("message", (message: Imessage) => {
     if (message.act) {
