@@ -1,6 +1,3 @@
-import { SendHandle } from "node:child_process";
-import { IncomingMessage, ServerResponse } from "node:http";
-import { Socket } from "node:net";
 import serverCallback from "../index.js";
 
 const http = require("http");
@@ -16,7 +13,7 @@ process.on("message", (message: string, sendHandle: any) => {
   if (message === "server") {
     worker = sendHandle;
     // TCP服务器监听的3000端口，客户端通过3000端口访问时触发，socket 是 net.Socket 的实例。
-    worker.on("connection", (socket: Socket) => {
+    worker.on("connection", (socket: any) => {
       // Http服务器触发connection事件注册的每个监听器，
       server.emit("connection", socket);
     });

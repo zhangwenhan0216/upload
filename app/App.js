@@ -7,7 +7,7 @@ import Progress from "./Progress";
 import FileList from "./FileList";
 import CanvasClock from "./canvas/time";
 import ScratchCard from "./canvas/scratchCard";
-// import "./utils/compose";
+import "./utils";
 
 function App() {
   let inputRef;
