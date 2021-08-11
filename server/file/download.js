@@ -15,7 +15,7 @@ const fileList = async (res, req) => {
       res.end();
       return;
     }
-    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Cache-Control", "no-cache max-age=0");
     res.setHeader("ETag", eTag); // 服务端生成 ETag token值
     const fileDir = await fs
       .readdirSync(filePath)

@@ -6,42 +6,6 @@ let arr = [
   { id: 5, name: "部门5", pid: 4 },
 ];
 
-// function arrayToTree(arrs) {
-//   const result = []; // 结果
-//   const dataMap = {}; //map
-
-//   for (const item of arrs) {
-//     const id = item.id;
-//     const pid = item.pid;
-
-//     if (!dataMap[id]) {
-//       dataMap[id] = {
-//         children: [],
-//       };
-//     }
-
-//     dataMap[id] = {
-//       ...item,
-//       children: dataMap[id].children,
-//     };
-
-//     const treeItem = dataMap[id];
-
-//     if (treeItem.pid === 0) {
-//       result.push(treeItem);
-//     } else {
-//       if (!dataMap[pid]) {
-//         dataMap[pid] = {
-//           children: [],
-//         };
-//       }
-//       dataMap[pid].children.push(treeItem);
-//     }
-//   }
-//   return result;
-// }
-console.log("", arrayToTree(arr));
-
 function arrayToTree(arrs) {
   const result = [];
   const dataMap = {};
@@ -57,11 +21,10 @@ function arrayToTree(arrs) {
 
     dataMap[id] = {
       ...item,
-      children: dataMap[id].children, // 将children的指向
+      children: dataMap[id].children,
     };
-
-    const treeItem = dataMap[id]; // 当前id对应值
-    if (item.pid === 0) {
+    const treeItem = dataMap[id];
+    if (pid === 0) {
       result.push(treeItem);
     } else {
       if (!dataMap[pid]) {
@@ -75,23 +38,46 @@ function arrayToTree(arrs) {
   return result;
 }
 
-function Animal(name) {
-  this.name = name;
+console.log("", arrayToTree(arr));
+
+// 寄生组合式继承
+
+function inheriterObject(b) {
+  function F() {}
+  F.prototype = b;
+  return new F();
 }
-Animal.color = "black";
-Animal.prototype.say = function () {
-  console.log("I'm " + this.name);
+
+function inheriterPrototype(subClass, superClass) {
+  const p = inheriterObject(superClass.prototype);
+  p.constructor = subClass;
+  subClass.prototype = p;
+}
+function SuperType(name) {
+  this.name = name;
+  this.colors = ["red", "yellow", "bule"];
+}
+SuperType.prototype.sayName = function () {
+  console.log(this.name);
 };
-var cat = new Animal("cat");
+function SubType(name, age) {
+  SuperType.call(this, name);
+  this.age = age;
+}
 
-console.log(
-  cat.name, //cat
-  cat.color //undefined
-);
-cat.say(); //I'm cat
+inheriterPrototype(SubType, SuperType);
 
-console.log(
-  Animal.name, //Animal
-  Animal.color //back
-);
-Animal.say(); //Animal.say is not a function
+SubType.prototype.sayAge = function () {
+  console.log(this.age);
+};
+
+let instancel = new SubType("jackson", 22);
+instancel.colors.push("pink");
+instancel.sayName(); // "jackson"
+instancel.sayAge(); //22
+console.log(instancel.colors); // ["red", "yellow", "bule", "pink"]
+
+let instance2 = new SubType("bear", 20);
+console.log(instance2.colors); // ["red", "yellow", "bule"]
+instance2.sayName(); // "bear";
+instance2.sayAge(); // 20
